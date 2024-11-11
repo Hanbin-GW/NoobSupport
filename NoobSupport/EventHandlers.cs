@@ -1,9 +1,11 @@
 using System;
 using System.Linq;
+using CustomPlayerEffects;
 using Exiled.API.Enums;
 using Exiled.API.Extensions;
 using Exiled.Events.EventArgs.Player;
 using InventorySystem.Items.MicroHID;
+using Exiled.API.Enums;
 
 namespace NoobSupport
 {
@@ -58,12 +60,20 @@ namespace NoobSupport
                 }
             }
         }
+
+        public void OnReceivingEffect(ReceivingEffectEventArgs ev)
+        {
+            if (ev.Effect is StatusEffectBase effect && effect.GetEffectType() == EffectType.CardiacArrest)
+            {
+                ev.Player.ShowHint($"<color=red>{new string('\n',10)}{string.Format(Plugin.Instance.Config.CardiacArrestMessage)}</color>");
+            }
+        }
         
         public void OnPickingUpSCP207(PickingUpItemEventArgs ev)
         {
             if (ev.Pickup.Type == ItemType.SCP207)
             {
-                CustomPlayerEffects.StatusEffectBase scp207Effect = ev.Player.ActiveEffects.FirstOrDefault(effect => effect.GetEffectType() == EffectType.Scp207);
+                StatusEffectBase scp207Effect = ev.Player.ActiveEffects.FirstOrDefault(effect => effect.GetEffectType() == EffectType.Scp207);
 
                 if (scp207Effect != null)
                 {
@@ -72,7 +82,7 @@ namespace NoobSupport
             }
             if (ev.Pickup.Type == ItemType.AntiSCP207)
             {
-                CustomPlayerEffects.StatusEffectBase antiscp207Effect = ev.Player.ActiveEffects.FirstOrDefault(effect => effect.GetEffectType() == EffectType.AntiScp207);
+                StatusEffectBase antiscp207Effect = ev.Player.ActiveEffects.FirstOrDefault(effect => effect.GetEffectType() == EffectType.AntiScp207);
 
                 if (antiscp207Effect != null)
                 {
