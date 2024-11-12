@@ -64,17 +64,27 @@ namespace NoobSupport
         {
             if (ev.Player.IsHost) return; 
             // Define the effect name
-            //string effectName = ev.Effect.name;
+            string effectName = ev.Effect.name;
             if (ev.Effect.GetEffectType() is EffectType.CardiacArrest)
             {
-                //ev.Player.ShowHint($"<color=red>{new string('\n', 10)}{string.Format(Plugin.Instance.Config.CardiacArrestMessage)}</color>");
-                ev.Player.Broadcast(5,$"<color=red>{Plugin.Instance.Config.CardiacArrestMessage}</color>");
+                //ev.Player.ShowHint($"<color=red>{new string('\n', 10)}{string.Format(Plugin.Instance.Config.CardiacArrestMessage)}</color>",5);
+                ev.Player.Broadcast(5,$"<size=25><color=red>{_plugin.Config.CardiacArrestMessage}</color></size>");
             }
-            /*Customize the message if necessary
-             string message = $"You have received the effect: {effectName}";
 
-             Send the broadcast to the player for 5 seconds
-             ev.Player.ShowHint(message,5);*/
+            if (ev.Effect.GetEffectType() is EffectType.Poisoned)
+            {
+                ev.Player.Broadcast(5,$"<size=25><color=red>{_plugin.Config.PoisonMessage}</color></size>");
+            }
+
+            if (ev.Effect.GetEffectType() is EffectType.Burned)
+            {
+                ev.Player.Broadcast(5,$"<size=25><color=orange>{_plugin.Config.BurnedMessage}</color></size>");
+            }
+
+            if (ev.Effect.GetEffectType() is EffectType.Scanned)
+            {
+                ev.Player.Broadcast(5,$"<size=25><color=red>{_plugin.Config.ScannedMessage}</color></size>");
+            }
         }
         public void OnHurting(HurtingEventArgs ev)
         {
