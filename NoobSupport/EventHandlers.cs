@@ -5,7 +5,6 @@ using Exiled.API.Enums;
 using Exiled.API.Extensions;
 using Exiled.Events.EventArgs.Player;
 using InventorySystem.Items.MicroHID;
-using Exiled.API.Enums;
 
 namespace NoobSupport
 {
@@ -60,15 +59,31 @@ namespace NoobSupport
                 }
             }
         }
-
-        public void OnReceivingEffect(ReceivingEffectEventArgs ev)
+        
+        public void OnEffectAdded(ReceivingEffectEventArgs ev)
         {
-            if (ev.Effect is StatusEffectBase effect && effect.GetEffectType() == EffectType.CardiacArrest)
+            if (ev.Player.IsHost) return; 
+            // Define the effect name
+            //string effectName = ev.Effect.name;
+            if (ev.Effect.GetEffectType() is EffectType.CardiacArrest)
             {
-                ev.Player.ShowHint($"<color=red>{new string('\n',10)}{string.Format(Plugin.Instance.Config.CardiacArrestMessage)}</color>");
+                //ev.Player.ShowHint($"<color=red>{new string('\n', 10)}{string.Format(Plugin.Instance.Config.CardiacArrestMessage)}</color>");
+                ev.Player.Broadcast(5,$"<color=red>{Plugin.Instance.Config.CardiacArrestMessage}</color>");
+            }
+            /*Customize the message if necessary
+             string message = $"You have received the effect: {effectName}";
+
+             Send the broadcast to the player for 5 seconds
+             ev.Player.ShowHint(message,5);*/
+        }
+        public void OnHurting(HurtingEventArgs ev)
+        {
+            if (ev.DamageHandler.Type == DamageType.Scp049)
+            {
+                ev.Player.ShowHint($"<color=red>{new string('\n', 10)}{string.Format(Plugin.Instance.Config.CardiacArrestMessage)}</color>", 2);
             }
         }
-        
+
         public void OnPickingUpSCP207(PickingUpItemEventArgs ev)
         {
             if (ev.Pickup.Type == ItemType.SCP207)

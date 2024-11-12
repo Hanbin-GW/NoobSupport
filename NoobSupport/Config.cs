@@ -15,6 +15,6 @@ namespace NoobSupport
         public string Scp207HintMessage { get; set; } = "당신은 {0} 개의 SCP-207 를 마셧습니다!";
         public string AntiScp207HintMessage { get; set; } = "당신은 {0} 개의 Anti SCP-207 를 마셧습니다!";
 
-        public string CardiacArrestMessage { get; set; } = "심정지 가 감지되었습니다.. 아드레난린 주사기를 사용하여 회복하십시요..!";
+        public string CardiacArrestMessage { get; set; } = "심정지 가 감지되었습니다.. 대량의 의료용 아이탬 또는 아드레난린 주사기를 사용하여 회복하십시요..!";
     }
 }
