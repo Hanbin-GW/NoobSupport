@@ -3,12 +3,14 @@ using System.Linq;
 using CustomPlayerEffects;
 using Exiled.API.Enums;
 using Exiled.API.Extensions;
+using Exiled.API.Features;
 using Exiled.Events.EventArgs.Item;
 using Exiled.Events.EventArgs.Player;
 using Exiled.Events.EventArgs.Scp096;
 using InventorySystem.Items.Jailbird;
 using InventorySystem.Items.MicroHID;
 using MEC;
+using NoobSupport.Utilities;
 using PlayerRoles;
 
 namespace NoobSupport
@@ -16,7 +18,7 @@ namespace NoobSupport
     public class EventHandlers
     {
         private readonly Plugin _plugin;
-
+        private ShowHintManager _showHintManager;
         public EventHandlers(Plugin plugin)
         {
             this._plugin = plugin;
@@ -99,19 +101,23 @@ namespace NoobSupport
                 switch (ev.Effect.GetEffectType())
                 {
                     case EffectType.CardiacArrest:
-                        ev.Player.ShowHint($"<color=red>{_plugin.Config.CardiacArrestMessage}</color>", 5);
+                        //ev.Player.ShowHint($"<color=red>{_plugin.Config.CardiacArrestMessage}</color>", 5);
+                        _showHintManager.AddHint(ev.Player,$"<color=red>{new string('\n',10)}{string.Format(_plugin.Config.CardiacArrestMessage)}</color>",5f);
                         break;
 
                     case EffectType.Poisoned:
-                        ev.Player.ShowHint($"<color=green>{_plugin.Config.PoisonMessage}</color>", 5);
+                        //ev.Player.ShowHint($"<color=green>{_plugin.Config.PoisonMessage}</color>", 5);
+                        _showHintManager.AddHint(ev.Player,$"<color=DarkGreen>{new string('\n',10)}{string.Format(_plugin.Config.PoisonMessage)}</color>",5f);
                         break;
 
                     case EffectType.Burned:
-                        ev.Player.ShowHint($"<color=orange>{_plugin.Config.BurnedMessage}</color>", 5);
+                        //ev.Player.ShowHint($"<color=orange>{_plugin.Config.BurnedMessage}</color>", 5);
+                        _showHintManager.AddHint(ev.Player,$"<color=orange>{new string('\n',10)}{string.Format(_plugin.Config.BurnedMessage)}</color>",5f);
                         break;
 
                     case EffectType.Scanned:
-                        ev.Player.ShowHint($"<color=blue>{_plugin.Config.ScannedMessage}</color>", 5);
+                        //ev.Player.ShowHint($"<color=blue>{_plugin.Config.ScannedMessage}</color>", 5);
+                        _showHintManager.AddHint(ev.Player,$"<color=darkblue>{new string('\n',10)}{string.Format(_plugin.Config.ScannedMessage)}</color>",5f);
                         break;
                 }
             });
@@ -149,12 +155,12 @@ namespace NoobSupport
         {
             if (ev.DamageHandler.Type == DamageType.Scp049)
             {
-                ev.Player.ShowHint($"<color=red>{new string('\n', 10)}{string.Format(Plugin.Instance.Config.CardiacArrestMessage)}</color>", 2);
+                //ev.Player.ShowHint($"<color=red>{new string('\n', 10)}{string.Format(Plugin.Instance.Config.CardiacArrestMessage)}</color>", 2);
             }
 
             if (ev.DamageHandler.Type == DamageType.A7)
             {
-                ev.Player.ShowHint($"<color=orange>{new string('\n',10)}{_plugin.Config.A7Info}");
+                //ev.Player.ShowHint($"<color=orange>{new string('\n',10)}{_plugin.Config.A7Info}");
             }
 
             if (ev.Player.Health <= 20 && ev.Player.IsHuman)
