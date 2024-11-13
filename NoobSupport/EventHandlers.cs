@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Text;
 using CustomPlayerEffects;
 using Exiled.API.Enums;
 using Exiled.API.Extensions;
@@ -7,11 +8,18 @@ using Exiled.API.Features;
 using Exiled.Events.EventArgs.Item;
 using Exiled.Events.EventArgs.Player;
 using Exiled.Events.EventArgs.Scp096;
+using Hints;
 using InventorySystem.Items.Jailbird;
 using InventorySystem.Items.MicroHID;
 using MEC;
 using NoobSupport.Utilities;
 using PlayerRoles;
+using Random = UnityEngine.Random;
+using RueI;
+using RueI.Elements;
+using RueI.Elements.Delegates;
+using RueI.Extensions.HintBuilding;
+using RueI.Parsing.Enums;
 
 namespace NoobSupport
 {
@@ -21,6 +29,78 @@ namespace NoobSupport
         public EventHandlers(Plugin plugin)
         {
             this._plugin = plugin;
+        }
+        
+        public void OnPlayerHurting(HurtingEventArgs ev)
+        {
+            // 예시 상황: SCP가 데미지를 입을 때 효과 표시
+            if (ev.Player.Role.Side == Side.Scp)
+            {
+                ShowPlayerEffects(ev.Player);
+            }
+        }
+        
+        public void ShowString(ReferenceHub hub, TimeSpan duration, string content)
+        {
+            hub.hints.Show(new TextHint(content, new HintParameter[] { new StringHintParameter(content) }, null, (float)duration.TotalSeconds));
+        }
+        private void ShowPlayerEffects(Player player)
+        {
+            string content = GetEffectContent(player);
+            ShowString(player.ReferenceHub, TimeSpan.FromSeconds(5), content);
+        }
+        
+        private static string GetEffectContent(Player player)
+        {
+            StringBuilder sb = new StringBuilder()
+                .SetSize(65, MeasurementUnit.Percentage)
+                .SetAlignment(HintBuilding.AlignStyle.Right);
+
+            // 플레이어가 가진 효과를 순회하며 효과 이름과 지속 시간을 표시
+            foreach (var effect in player.ActiveEffects)
+            {
+                string effectName = effect.name;
+                float duration = effect.Duration;
+
+                sb.Append($"{effectName} - {duration:F1}초 남음")
+                    .AddLinebreak();
+            }
+
+            return sb.ToString();
+        }
+
+        public void OnDying(DyingEventArgs ev)
+        {
+            if (ev.Attacker.Role.Team == Team.SCPs)
+            {
+                if (ev.Attacker.Role.Type is RoleTypeId.Scp173)
+                {
+                    int scpHealAmount = Random.Range(0, 80);
+                    ev.Attacker.Heal(scpHealAmount);
+                    ev.Attacker.ShowHint($"{new string('\n',10)}{string.Format(_plugin.Config.ScpHealMessage,scpHealAmount)}",5);
+                }
+                
+                if (ev.Attacker.Role.Type is RoleTypeId.Scp096)
+                {
+                    int scpHealAmount = Random.Range(0, 30);
+                    ev.Attacker.Heal(scpHealAmount);
+                    ev.Attacker.ShowHint($"{new string('\n',10)}{string.Format(_plugin.Config.ScpHealMessage,scpHealAmount)}",5);
+                }
+                
+                if (ev.Attacker.Role.Type is RoleTypeId.Scp049)
+                {
+                    int scpHealAmount = Random.Range(0, 75);
+                    ev.Attacker.Heal(scpHealAmount);
+                    ev.Attacker.ShowHint($"{new string('\n',10)}{string.Format(_plugin.Config.ScpHealMessage,scpHealAmount)}",5);
+                }
+                
+                if (ev.Attacker.Role.Type is RoleTypeId.Scp939)
+                {
+                    int scpHealAmount = Random.Range(0, 60);
+                    ev.Attacker.Heal(scpHealAmount);
+                    ev.Attacker.ShowHint($"{new string('\n',10)}{string.Format(_plugin.Config.ScpHealMessage,scpHealAmount)}",5);
+                }
+            }
         }
         
         public void OnPickingUpMicroHid(PickingUpItemEventArgs ev)

@@ -26,5 +26,7 @@ namespace NoobSupport
         public string Looking096 { get; set; } = "SCP096 이 당신을 추적하고있습니다..!\n폭주가 끝날때까지 버티십시요..!";
 
         public string JailbirdUseMessage { get; set; } = "남은 돌진공격 수: {0}";
+
+        public string ScpHealMessage { get; set; } = "적을 처치하여 {0} 의 HP 를 회복하셧습니다.";
     }
 }

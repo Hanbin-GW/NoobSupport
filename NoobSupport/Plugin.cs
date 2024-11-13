@@ -7,13 +7,16 @@ namespace NoobSupport
     {
         public override string Name { get; } = "Noob Support";
         public override string Author { get; } = "Hanbin-GW";
-        public override Version Version { get; } = new Version(0, 6, 2);
+        public override Version Version { get; } = new Version(0, 7, 0);
         public static Plugin Instance { get; private set; }
         private EventHandlers EventHandlers { get; set; }
         public override void OnEnabled()
         {
             Instance = this;
             EventHandlers = new EventHandlers(this);
+            RueI.RueIMain.EnsureInit();
+            Exiled.Events.Handlers.Player.Hurting += EventHandlers.OnPlayerHurting;
+            Exiled.Events.Handlers.Player.Dying += EventHandlers.OnDying;
             Exiled.Events.Handlers.Player.ReceivingEffect += EventHandlers.OnEffectAdded;
             Exiled.Events.Handlers.Player.Hurting += EventHandlers.OnHurting;
             Exiled.Events.Handlers.Player.PickingUpItem += EventHandlers.OnPickingUpMicroHid;
@@ -25,7 +28,9 @@ namespace NoobSupport
         }
 
         public override void OnDisabled()
-        {            
+        {
+            Exiled.Events.Handlers.Player.Hurting -= EventHandlers.OnPlayerHurting;
+            Exiled.Events.Handlers.Player.Dying -= EventHandlers.OnDying;
             Exiled.Events.Handlers.Player.ReceivingEffect -= EventHandlers.OnEffectAdded;
             Exiled.Events.Handlers.Player.Hurting -= EventHandlers.OnHurting;
             Exiled.Events.Handlers.Player.PickingUpItem -= EventHandlers.OnPickingUpMicroHid;
