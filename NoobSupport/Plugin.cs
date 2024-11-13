@@ -7,7 +7,7 @@ namespace NoobSupport
     {
         public override string Name { get; } = "Noob Support";
         public override string Author { get; } = "Hanbin-GW";
-        public override Version Version { get; } = new Version(0, 6, 0);
+        public override Version Version { get; } = new Version(0, 6, 2);
         public static Plugin Instance { get; private set; }
         private EventHandlers EventHandlers { get; set; }
         public override void OnEnabled()

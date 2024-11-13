@@ -18,7 +18,6 @@ namespace NoobSupport
     public class EventHandlers
     {
         private readonly Plugin _plugin;
-        private ShowHintManager _showHintManager;
         public EventHandlers(Plugin plugin)
         {
             this._plugin = plugin;
@@ -97,27 +96,27 @@ namespace NoobSupport
             Timing.CallDelayed(0.5f, () =>
             {
                 if (!ev.Player.IsConnected) return;
-
+                var showHintManager = new ShowHintManager();
                 switch (ev.Effect.GetEffectType())
                 {
                     case EffectType.CardiacArrest:
-                        //ev.Player.ShowHint($"<color=red>{_plugin.Config.CardiacArrestMessage}</color>", 5);
-                        _showHintManager.AddHint(ev.Player,$"<color=red>{new string('\n',10)}{string.Format(_plugin.Config.CardiacArrestMessage)}</color>",5f);
+                        ev.Player.ShowHint($"<color=red>{new string('\n', 10)}{_plugin.Config.CardiacArrestMessage}</color>", 5);
+                        //showHintManager.AddHint(ev.Player,$"<color=red>{string.Format(_plugin.Config.CardiacArrestMessage)}</color>",5f);
                         break;
 
                     case EffectType.Poisoned:
-                        //ev.Player.ShowHint($"<color=green>{_plugin.Config.PoisonMessage}</color>", 5);
-                        _showHintManager.AddHint(ev.Player,$"<color=DarkGreen>{new string('\n',10)}{string.Format(_plugin.Config.PoisonMessage)}</color>",5f);
+                        ev.Player.ShowHint($"<color=green>{new string('\n', 10)}{_plugin.Config.PoisonMessage}</color>", 5);
+                        //showHintManager.AddHint(ev.Player,$"<color=DarkGreen>{string.Format(_plugin.Config.PoisonMessage)}</color>",5f);
                         break;
 
                     case EffectType.Burned:
-                        //ev.Player.ShowHint($"<color=orange>{_plugin.Config.BurnedMessage}</color>", 5);
-                        _showHintManager.AddHint(ev.Player,$"<color=orange>{new string('\n',10)}{string.Format(_plugin.Config.BurnedMessage)}</color>",5f);
+                        ev.Player.ShowHint($"<color=orange>{new string('\n', 10)}{_plugin.Config.BurnedMessage}</color>", 5);
+                        //showHintManager.AddHint(ev.Player,$"<color=orange>{string.Format(_plugin.Config.BurnedMessage)}</color>",5f);
                         break;
 
                     case EffectType.Scanned:
-                        //ev.Player.ShowHint($"<color=blue>{_plugin.Config.ScannedMessage}</color>", 5);
-                        _showHintManager.AddHint(ev.Player,$"<color=darkblue>{new string('\n',10)}{string.Format(_plugin.Config.ScannedMessage)}</color>",5f);
+                        ev.Player.ShowHint($"<color=blue>{new string('\n', 10)}{_plugin.Config.ScannedMessage}</color>", 5);
+                        //showHintManager.AddHint(ev.Player,$"<color=darkblue>{string.Format(_plugin.Config.ScannedMessage)}</color>",5f);
                         break;
                 }
             });
