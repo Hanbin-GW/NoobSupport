@@ -7,7 +7,7 @@ namespace NoobSupport
     {
         public override string Name { get; } = "Noob Support";
         public override string Author { get; } = "Hanbin-GW";
-        public override Version Version { get; } = new Version(0, 3, 3);
+        public override Version Version { get; } = new Version(0, 5, 2);
         public static Plugin Instance { get; private set; }
         private EventHandlers EventHandlers { get; set; }
         public override void OnEnabled()
@@ -19,6 +19,8 @@ namespace NoobSupport
             Exiled.Events.Handlers.Player.PickingUpItem += EventHandlers.OnPickingUpMicroHid;
             Exiled.Events.Handlers.Player.PickingUpItem += EventHandlers.OnPickingUpSCP207;
             Exiled.Events.Handlers.Player.ChangingItem += EventHandlers.OnEquipMicroHid;
+            Exiled.Events.Handlers.Scp096.AddingTarget += EventHandlers.OnLookingAtScp096;
+            Exiled.Events.Handlers.Item.ChargingJailbird += EventHandlers.OnChargingJailbird;
             base.OnEnabled();
         }
 
@@ -29,6 +31,8 @@ namespace NoobSupport
             Exiled.Events.Handlers.Player.PickingUpItem -= EventHandlers.OnPickingUpMicroHid;
             Exiled.Events.Handlers.Player.PickingUpItem -= EventHandlers.OnPickingUpSCP207;
             Exiled.Events.Handlers.Player.ChangingItem -= EventHandlers.OnEquipMicroHid;
+            Exiled.Events.Handlers.Scp096.AddingTarget -= EventHandlers.OnLookingAtScp096;
+            Exiled.Events.Handlers.Item.ChargingJailbird -= EventHandlers.OnChargingJailbird;
             base.OnDisabled();
         }
     }

@@ -3,8 +3,13 @@ using System.Linq;
 using CustomPlayerEffects;
 using Exiled.API.Enums;
 using Exiled.API.Extensions;
+using Exiled.Events.EventArgs.Item;
 using Exiled.Events.EventArgs.Player;
+using Exiled.Events.EventArgs.Scp096;
+using InventorySystem.Items.Jailbird;
 using InventorySystem.Items.MicroHID;
+using MEC;
+using PlayerRoles;
 
 namespace NoobSupport
 {
@@ -16,7 +21,7 @@ namespace NoobSupport
         {
             this._plugin = plugin;
         }
-
+        
         public void OnPickingUpMicroHid(PickingUpItemEventArgs ev)
         {
             if (ev.Pickup.Base is MicroHIDPickup microHidPickup)
@@ -59,39 +64,108 @@ namespace NoobSupport
                 }
             }
         }
-        
-        public void OnEffectAdded(ReceivingEffectEventArgs ev)
+
+        public void OnChargingJailbird(ChargingJailbirdEventArgs ev)
         {
-            if (ev.Player.IsHost) return; 
-            // Define the effect name
-            string effectName = ev.Effect.name;
-            if (ev.Effect.GetEffectType() is EffectType.CardiacArrest)
+            if (ev.Item == null)
             {
-                //ev.Player.ShowHint($"<color=red>{new string('\n', 10)}{string.Format(Plugin.Instance.Config.CardiacArrestMessage)}</color>",5);
-                ev.Player.Broadcast(5,$"<size=25><color=red>{_plugin.Config.CardiacArrestMessage}</color></size>");
+                return;
             }
 
-            if (ev.Effect.GetEffectType() is EffectType.Poisoned)
+            if (ev.Item.Base is JailbirdItem jailbirdItem)
             {
-                ev.Player.Broadcast(5,$"<size=25><color=red>{_plugin.Config.PoisonMessage}</color></size>");
-            }
+                int maxCharges = 5;
+                int remainingCharges = maxCharges - jailbirdItem.TotalChargesPerformed;
 
-            if (ev.Effect.GetEffectType() is EffectType.Burned)
-            {
-                ev.Player.Broadcast(5,$"<size=25><color=orange>{_plugin.Config.BurnedMessage}</color></size>");
-            }
-
-            if (ev.Effect.GetEffectType() is EffectType.Scanned)
-            {
-                ev.Player.Broadcast(5,$"<size=25><color=red>{_plugin.Config.ScannedMessage}</color></size>");
+                if (remainingCharges > 1)
+                {
+                    ev.Player.ShowHint($"<color=#00B7EB>{new string('\n', 10)}{string.Format(_plugin.Config.JailbirdUseMessage, remainingCharges)}</color>", 2);
+                }
+                else
+                {
+                    ev.Player.ShowHint($"<color=#C73804>{new string('\n', 10)}{string.Format(_plugin.Config.JailbirdUseMessage, remainingCharges)}</color>", 2);
+                }
             }
         }
+
+        public void OnEffectAdded(ReceivingEffectEventArgs ev)
+        {
+            if (ev.Player.IsHost || !ev.Player.IsConnected) return;
+
+            Timing.CallDelayed(0.5f, () =>
+            {
+                if (!ev.Player.IsConnected) return;
+
+                switch (ev.Effect.GetEffectType())
+                {
+                    case EffectType.CardiacArrest:
+                        ev.Player.ShowHint($"<color=red>{_plugin.Config.CardiacArrestMessage}</color>", 5);
+                        break;
+
+                    case EffectType.Poisoned:
+                        ev.Player.ShowHint($"<color=green>{_plugin.Config.PoisonMessage}</color>", 5);
+                        break;
+
+                    case EffectType.Burned:
+                        ev.Player.ShowHint($"<color=orange>{_plugin.Config.BurnedMessage}</color>", 5);
+                        break;
+
+                    case EffectType.Scanned:
+                        ev.Player.ShowHint($"<color=blue>{_plugin.Config.ScannedMessage}</color>", 5);
+                        break;
+                }
+            });
+        }
+
+        /*public void OnEffectAdded(ReceivingEffectEventArgs ev)
+        {
+            if (ev.Player.IsHost|| !ev.Player.IsConnected) return;
+            // Define the effect name
+            //string effectName = ev.Effect.name;
+            switch (ev.Effect.GetEffectType())
+            {
+                case EffectType.CardiacArrest:
+                    ev.Player.ShowHint($"<color=blue>{_plugin.Config.CardiacArrestMessage}</color>", 5); // 개행 없이 테스트
+                    //ev.Player.Broadcast(5,$"<color=red>{_plugin.Config.CardiacArrestMessage}</color>");
+                    break;
+
+                case EffectType.Poisoned:
+                    //ev.Player.Broadcast(5, $"<color=green>{_plugin.Config.PoisonMessage}</color>");
+                    ev.Player.ShowHint($"<color=blue>{_plugin.Config.PoisonMessage}</color>", 5); // 개행 없이 테스트
+                    break;
+
+                case EffectType.Burned:
+                    //ev.Player.Broadcast(5, $"<color=orange>{_plugin.Config.BurnedMessage}</color>");
+                    ev.Player.ShowHint($"<color=blue>{_plugin.Config.BurnedMessage}</color>", 5); // 개행 없이 테스트
+                    break;
+
+                case EffectType.Scanned:
+                    ev.Player.ShowHint($"<color=blue>{_plugin.Config.ScannedMessage}</color>", 5); // 개행 없이 테스트
+                    //ev.Player.Broadcast(5, $"<color=blue>{new string('\n', 10)}{string.Format(_plugin.Config.ScannedMessage)}</color>");
+                    break;
+            }
+        }*/
         public void OnHurting(HurtingEventArgs ev)
         {
             if (ev.DamageHandler.Type == DamageType.Scp049)
             {
                 ev.Player.ShowHint($"<color=red>{new string('\n', 10)}{string.Format(Plugin.Instance.Config.CardiacArrestMessage)}</color>", 2);
             }
+
+            if (ev.DamageHandler.Type == DamageType.A7)
+            {
+                ev.Player.ShowHint($"<color=orange>{new string('\n',10)}{_plugin.Config.A7Info}");
+            }
+
+            if (ev.Player.Health <= 20 && ev.Player.IsHuman)
+            {
+                ev.Player.ShowHint($"<color=red>{new string('\n',10)}{string.Format(_plugin.Config.LowHpMessage)}</color>");
+            }
+        }
+        
+        public void OnLookingAtScp096(AddingTargetEventArgs ev)
+        {
+            ev.Target.Broadcast(5,$"<color=red>{new string('\n',10)}{string.Format(_plugin.Config.Looking096)}</color>");
         }
 
         public void OnPickingUpSCP207(PickingUpItemEventArgs ev)
