@@ -223,26 +223,30 @@ namespace NoobSupport
 
         public void OnHurting(HurtingEventArgs ev)
         {
-            if (ev.DamageHandler.Type == DamageType.Scp049)
+            StringBuilder sb = new StringBuilder()
+                .SetSize(30, MeasurementUnit.Percentage)
+                .SetAlignment(HintBuilding.AlignStyle.Right);
+            // Define the effect message based on the effect type
+            string hintMessage = string.Empty;
+            switch (ev.DamageHandler.Type)
             {
-                //ev.Player.ShowHint($"<color=red>{new string('\n', 10)}{string.Format(Plugin.Instance.Config.CardiacArrestMessage)}</color>", 2);
+                case DamageType.CardiacArrest:
+                    sb.Append($"<color=red>{_plugin.Config.CardiacArrestMessage}</color>");
+                    sb.AppendLine();
+                    break;
+                case DamageType.A7:
+                    sb.Append($"<color=orange>{_plugin.Config.A7Info}</color>");
+                    sb.AppendLine();
+                    break;
             }
-
-            if (ev.DamageHandler.Type == DamageType.A7)
+            hintMessage = sb.ToString();
+            
+            if (!string.IsNullOrEmpty(hintMessage))
             {
-                ev.Player.ShowHint($"<color=orange>{new string('\n',10)}{_plugin.Config.A7Info}");
-            }
-
-            if (ev.DamageHandler.Type == DamageType.Bleeding)
-            {
-                //ev.Player.ShowHint($"<color=orange>{new string('\n',10)}{_plugin.Config.A7Info}");
+                TimeSpan duration5Sec = TimeSpan.FromSeconds(5);
+                ShowString(ev.Player.ReferenceHub,  duration5Sec , hintMessage); // 5초 동안 힌트를 표시합니다.
             }
             
-            if (ev.DamageHandler.Type == DamageType.CardiacArrest)
-            {
-                ev.Player.ShowHint($"<color=red>{new string('\n',10)}{_plugin.Config.CardiacArrestMessage}");
-            }
-
             if (ev.Player.Health <= 20 && ev.Player.IsHuman)
             {
                 ev.Player.ShowHint($"<color=red>{new string('\n',10)}{string.Format(_plugin.Config.LowHpMessage)}</color>");
