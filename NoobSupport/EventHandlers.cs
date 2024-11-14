@@ -66,6 +66,18 @@ namespace NoobSupport
 
         public void OnDying(DyingEventArgs ev)
         {
+            if (ev.Attacker == null || ev.Player == null)
+            {
+                Log.Warn("Attacker is null in OnDying event.");
+                return;
+            }
+
+            if (_plugin.Config == null)
+            {
+                Log.Warn("Config is null in OnDying event.");
+                return;
+            }
+            
             if (ev.Attacker.Role.Team == Team.SCPs)
             {
                 if (ev.Attacker.Role.Type is RoleTypeId.Scp173)
