@@ -11,13 +11,8 @@ using Exiled.Events.EventArgs.Scp096;
 using Hints;
 using InventorySystem.Items.Jailbird;
 using InventorySystem.Items.MicroHID;
-using MEC;
-using NoobSupport.Utilities;
 using PlayerRoles;
 using Random = UnityEngine.Random;
-using RueI;
-using RueI.Elements;
-using RueI.Elements.Delegates;
 using RueI.Extensions.HintBuilding;
 using RueI.Parsing.Enums;
 
@@ -39,8 +34,8 @@ namespace NoobSupport
                 ShowPlayerEffects(ev.Player);
             }
         }
-        
-        public void ShowString(ReferenceHub hub, TimeSpan duration, string content)
+
+        private void ShowString(ReferenceHub hub, TimeSpan duration, string content)
         {
             hub.hints.Show(new TextHint(content, new HintParameter[] { new StringHintParameter(content) }, null, (float)duration.TotalSeconds));
         }
@@ -169,67 +164,51 @@ namespace NoobSupport
             }
         }
 
+       
+
         public void OnEffectAdded(ReceivingEffectEventArgs ev)
         {
             if (ev.Player.IsHost || !ev.Player.IsConnected) return;
-
-            Timing.CallDelayed(0.5f, () =>
-            {
-                if (!ev.Player.IsConnected) return;
-                var showHintManager = new ShowHintManager();
-                switch (ev.Effect.GetEffectType())
-                {
-                    case EffectType.CardiacArrest:
-                        ev.Player.ShowHint($"<color=red>{new string('\n', 10)}{_plugin.Config.CardiacArrestMessage}</color>", 5);
-                        //showHintManager.AddHint(ev.Player,$"<color=red>{string.Format(_plugin.Config.CardiacArrestMessage)}</color>",5f);
-                        break;
-
-                    case EffectType.Poisoned:
-                        ev.Player.ShowHint($"<color=green>{new string('\n', 10)}{_plugin.Config.PoisonMessage}</color>", 5);
-                        //showHintManager.AddHint(ev.Player,$"<color=DarkGreen>{string.Format(_plugin.Config.PoisonMessage)}</color>",5f);
-                        break;
-
-                    case EffectType.Burned:
-                        ev.Player.ShowHint($"<color=orange>{new string('\n', 10)}{_plugin.Config.BurnedMessage}</color>", 5);
-                        //showHintManager.AddHint(ev.Player,$"<color=orange>{string.Format(_plugin.Config.BurnedMessage)}</color>",5f);
-                        break;
-
-                    case EffectType.Scanned:
-                        ev.Player.ShowHint($"<color=blue>{new string('\n', 10)}{_plugin.Config.ScannedMessage}</color>", 5);
-                        //showHintManager.AddHint(ev.Player,$"<color=darkblue>{string.Format(_plugin.Config.ScannedMessage)}</color>",5f);
-                        break;
-                }
-            });
-        }
-
-        /*public void OnEffectAdded(ReceivingEffectEventArgs ev)
-        {
-            if (ev.Player.IsHost|| !ev.Player.IsConnected) return;
-            // Define the effect name
-            //string effectName = ev.Effect.name;
+            StringBuilder sb = new StringBuilder()
+                .SetSize(30, MeasurementUnit.Percentage)
+                .SetAlignment(HintBuilding.AlignStyle.Right);
+            // Define the effect message based on the effect type
+            string hintMessage = string.Empty;
             switch (ev.Effect.GetEffectType())
             {
                 case EffectType.CardiacArrest:
-                    ev.Player.ShowHint($"<color=blue>{_plugin.Config.CardiacArrestMessage}</color>", 5); // 개행 없이 테스트
-                    //ev.Player.Broadcast(5,$"<color=red>{_plugin.Config.CardiacArrestMessage}</color>");
+                    //hintMessage = $"<color=red>{_plugin.Config.CardiacArrestMessage}</color>";
+                    sb.Append($"<color=red>{_plugin.Config.CardiacArrestMessage}</color>");
+                    sb.AppendLine();
                     break;
 
                 case EffectType.Poisoned:
-                    //ev.Player.Broadcast(5, $"<color=green>{_plugin.Config.PoisonMessage}</color>");
-                    ev.Player.ShowHint($"<color=blue>{_plugin.Config.PoisonMessage}</color>", 5); // 개행 없이 테스트
+                    //hintMessage = $"<color=green>{_plugin.Config.PoisonMessage}</color>";
+                    sb.Append($"<color=green>{_plugin.Config.PoisonMessage}</color>");
                     break;
 
                 case EffectType.Burned:
-                    //ev.Player.Broadcast(5, $"<color=orange>{_plugin.Config.BurnedMessage}</color>");
-                    ev.Player.ShowHint($"<color=blue>{_plugin.Config.BurnedMessage}</color>", 5); // 개행 없이 테스트
+                    //hintMessage = $"<color=orange>{_plugin.Config.BurnedMessage}</color>";
+                    sb.Append($"<color=orange>{_plugin.Config.BurnedMessage}</color>");
+                    sb.AppendLine();
                     break;
 
                 case EffectType.Scanned:
-                    ev.Player.ShowHint($"<color=blue>{_plugin.Config.ScannedMessage}</color>", 5); // 개행 없이 테스트
-                    //ev.Player.Broadcast(5, $"<color=blue>{new string('\n', 10)}{string.Format(_plugin.Config.ScannedMessage)}</color>");
+                    //hintMessage = $"<color=blue>{_plugin.Config.ScannedMessage}</color>";
+                    sb.Append($"<color=cyan>{_plugin.Config.ScannedMessage}</color>");
+                    sb.AppendLine();
                     break;
             }
-        }*/
+            hintMessage = sb.ToString();
+            
+            // RueI를 사용하여 힌트를 표시
+            if (!string.IsNullOrEmpty(hintMessage))
+            {
+                TimeSpan duration5Sec = TimeSpan.FromSeconds(5);
+                ShowString(ev.Player.ReferenceHub,  duration5Sec , hintMessage); // 5초 동안 힌트를 표시합니다.
+            }
+        }
+
         public void OnHurting(HurtingEventArgs ev)
         {
             if (ev.DamageHandler.Type == DamageType.Scp049)
@@ -239,7 +218,17 @@ namespace NoobSupport
 
             if (ev.DamageHandler.Type == DamageType.A7)
             {
+                ev.Player.ShowHint($"<color=orange>{new string('\n',10)}{_plugin.Config.A7Info}");
+            }
+
+            if (ev.DamageHandler.Type == DamageType.Bleeding)
+            {
                 //ev.Player.ShowHint($"<color=orange>{new string('\n',10)}{_plugin.Config.A7Info}");
+            }
+            
+            if (ev.DamageHandler.Type == DamageType.CardiacArrest)
+            {
+                ev.Player.ShowHint($"<color=red>{new string('\n',10)}{_plugin.Config.CardiacArrestMessage}");
             }
 
             if (ev.Player.Health <= 20 && ev.Player.IsHuman)
