@@ -176,51 +176,6 @@ namespace NoobSupport
             }
         }
 
-       
-
-        public void OnEffectAdded(ReceivingEffectEventArgs ev)
-        {
-            if (ev.Player.IsHost || !ev.Player.IsConnected) return;
-            StringBuilder sb = new StringBuilder()
-                .SetSize(30, MeasurementUnit.Percentage)
-                .SetAlignment(HintBuilding.AlignStyle.Right);
-            // Define the effect message based on the effect type
-            string hintMessage = string.Empty;
-            switch (ev.Effect.GetEffectType())
-            {
-                case EffectType.CardiacArrest:
-                    //hintMessage = $"<color=red>{_plugin.Config.CardiacArrestMessage}</color>";
-                    sb.Append($"<color=red>{_plugin.Config.CardiacArrestMessage}</color>");
-                    sb.AppendLine();
-                    break;
-
-                case EffectType.Poisoned:
-                    //hintMessage = $"<color=green>{_plugin.Config.PoisonMessage}</color>";
-                    sb.Append($"<color=green>{_plugin.Config.PoisonMessage}</color>");
-                    break;
-
-                case EffectType.Burned:
-                    //hintMessage = $"<color=orange>{_plugin.Config.BurnedMessage}</color>";
-                    sb.Append($"<color=orange>{_plugin.Config.BurnedMessage}</color>");
-                    sb.AppendLine();
-                    break;
-
-                case EffectType.Scanned:
-                    //hintMessage = $"<color=blue>{_plugin.Config.ScannedMessage}</color>";
-                    sb.Append($"<color=cyan>{_plugin.Config.ScannedMessage}</color>");
-                    sb.AppendLine();
-                    break;
-            }
-            hintMessage = sb.ToString();
-            
-            // RueI를 사용하여 힌트를 표시
-            if (!string.IsNullOrEmpty(hintMessage))
-            {
-                TimeSpan duration5Sec = TimeSpan.FromSeconds(5);
-                ShowString(ev.Player.ReferenceHub,  duration5Sec , hintMessage); // 5초 동안 힌트를 표시합니다.
-            }
-        }
-
         public void OnHurting(HurtingEventArgs ev)
         {
             StringBuilder sb = new StringBuilder()
@@ -236,6 +191,14 @@ namespace NoobSupport
                     break;
                 case DamageType.A7:
                     sb.Append($"<color=orange>{_plugin.Config.A7Info}</color>");
+                    sb.AppendLine();
+                    break;
+                case DamageType.Bleeding:
+                    sb.Append($"<color=red>{_plugin.Config.BleedingMessage}</color>");
+                    sb.AppendLine();
+                    break;
+                case DamageType.PocketDimension:
+                    sb.Append($"<color=red>{_plugin.Config.PocketDimensionMessage}</color>");
                     sb.AppendLine();
                     break;
             }
