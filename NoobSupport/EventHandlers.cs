@@ -179,7 +179,7 @@ namespace NoobSupport
         public void OnHurting(HurtingEventArgs ev)
         {
             StringBuilder sb = new StringBuilder()
-                .SetSize(30, MeasurementUnit.Percentage)
+                .SetSize(100, MeasurementUnit.Percentage)
                 .SetAlignment(HintBuilding.AlignStyle.Right);
             // Define the effect message based on the effect type
             string hintMessage = string.Empty;
